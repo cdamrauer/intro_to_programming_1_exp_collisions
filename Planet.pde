@@ -30,7 +30,7 @@ public class Planet{
   }
 
 
-  // function that returns 'true' if top edge <= y0 or bottom edge <= y1
+  // function that returns 'true' if top edge <= y0 or bottom edge >= y1
   boolean isCollidingY(int y0, int y1) {
     if ( loc[1] - mySize / 2 <= y0 || loc[1] + mySize / 2 >= y1 )
       return true;
@@ -55,18 +55,48 @@ public class Planet{
   //     Need to step through mets array
   //     For each instance of Meteor check isCollidingX & isCollidingY against every other instance of Meteor
   //     If they're colliding, send them in opposite directions
+       void bounceOff() {
+         
+         int[] firstLoc;       // Array for storing loc values for comparison
+         int[] secondLoc;      // Array for storing loc values for comparison
+         
   
   //       For loop to mets.size
+           for ( int i = 0; i < mets.size(); i++ ) {
+             Meteor imet = (Meteor) mets.get(i);
   //       Look at loc[0] & loc[1] (let's call this instance A)
+              firstLoc[0] = imet.loc[0];
+              firstLoc[1] = imet.loc[1];
+
+  
   //         For loop to mets.size
-  //         Look at another loc[0] & loc[1] (let's call this instance B)
+             for ( int j = 0; j < mets.size(); j++) {
+               Meteor jmet = (Meteor) mets.get(j);
   //         Make sure you're not looking at instance A
+               if ( jmet != imet ){
+  //         Look at another loc[0] & loc[1] (let's call this instance B)
   //         Define instance B's loc[0] & loc[1] as its edges
+                int x0 = jmet.loc[0] - mySize / 2;
+                int x1 = jmet.loc[0] + mySize / 2;
+                int y0 = jmet.loc[1] - mySize / 2;
+                int y1 = jmet.loc[1] + mySize / 2;
+               }          // end if statement
   //         Send instance A's loc's & instance B's loc's to isCollidings
   //         If 'true' returned redirect dx or dy
-  //         end for loop
-  //       end for loop
+              if ( isCollidingX( x0 , x1 ) ){
+                dx *= -1;
+              }
+             
+              if ( isCollidingY( y0, y1 ) ){
+                dy *= -1;
+              }
 
+             }          // end for loop
+
+           }            // end for loop
+
+
+           }            // end bounceOff
 //*************************************************************************************
 //*************************************************************************************
   
@@ -74,6 +104,7 @@ public class Planet{
     fill(myColor);
     ellipse(loc[0], loc[1], mySize, mySize);
     checkEdgeBounce();
+    bounceOff();
     loc[0] += dx;
     loc[1] += dy;
     
